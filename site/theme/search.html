@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Search · {{ config.site_name }}{% endblock %}
+
+{% block content %}
+<div class="browse">
+  <div class="browse-head">
+    <div>
+      <span class="kicker-plain">Search</span>
+      <h1>Find a post</h1>
+    </div>
+  </div>
+  <form class="search-big" role="search" onsubmit="return false">
+    <input type="search" id="mkdocs-search-query" placeholder="Type to search" aria-label="Search" autofocus>
+  </form>
+  <div id="mkdocs-search-results" class="search-results" aria-live="polite"></div>
+</div>
+{% endblock %}
+
+{% block scripts %}{{ super() }}<script src="{{ 'search/main.js' | url }}"></script>{% endblock %}

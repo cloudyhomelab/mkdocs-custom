@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% import "partials/macros.html" as m with context %}
+
+{% block content %}
+{% if page.is_homepage %}
+  {% include "partials/home.html" %}
+{% else %}
+  {% include "partials/article.html" %}
+{% endif %}
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Not found · {{ config.site_name }}{% endblock %}
+
+{% block content %}
+<div class="browse">
+  <div class="browse-head">
+    <div>
+      <span class="kicker-plain">404</span>
+      <h1>Page not found</h1>
+    </div>
+  </div>
+  <p class="browse-note">The address may have changed. <a href="{{ nav.homepage.url | url if nav.homepage else base_url ~ '/' }}">Back to posts</a> or <a href="{{ 'search.html' | url }}">search</a>.</p>
+</div>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% import "partials/macros.html" as m with context %}
+{% set author = config.extra.author %}
+{% set toc_items = page.toc | list %}
+{% if toc_items | length == 1 and toc_items[0].children %}{% set toc_items = toc_items[0].children | list %}{% endif %}
+{% set notes = page.meta.notes or {} %}
+{% set has_notes = toc_items or notes %}
+
+<div class="article-back">
+  <a href="{{ nav.homepage.url | url if nav.homepage else base_url ~ '/' }}">
+    <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12.5 4 6.5 10l6 6"/></svg>Back to posts
+  </a>
+</div>
+
+<article class="article">
+  <header class="article-head">
+    <div class="kicker">
+      <span class="kicker-type">{{ page.meta.type | default('Post') }}</span>
+      {% if page.meta.tags or page.meta.updated %}
+      <span class="kicker-rule"></span>
+      <span class="kicker-meta">{% if page.meta.tags %}{{ page.meta.tags | join(' · ') }}{% endif %}{% if page.meta.tags and page.meta.updated %} · {% endif %}{% if page.meta.updated %}updated {{ m.fmt_date(page.meta.updated) }}{% endif %}</span>
+      {% endif %}
+    </div>
+    <h1>{{ page.title }}</h1>
+    {% if page.meta.description %}<p class="article-deck">{{ page.meta.description }}</p>{% endif %}
+    <div class="byline">
+      {% if author %}{{ m.avatar(author.name, 30) }}<span class="byline-name">{{ author.name }}</span><span class="byline-dot"></span>{% endif %}
+      <span>{% if page.meta.date %}{{ m.fmt_date(page.meta.date) }} · {% endif %}{{ m.read_time(page) }} read</span>
+    </div>
+  </header>
+
+  {% if page.meta.image %}
+  <figure class="article-lede"><img src="{{ page.meta.image | url }}" alt="{{ page.meta.image_alt | default('') }}"></figure>
+  {% endif %}
+
+  <div class="article-body{% if has_notes %} with-notes{% endif %}">
+    {% if has_notes %}
+    <aside class="article-notes">
+      {% if toc_items %}
+      <nav class="notes-group notes-toc" aria-label="Contents">
+        <span class="notes-label">Contents</span>
+        {% for t in toc_items %}<a href="{{ t.url }}">{{ t.title }}</a>{% endfor %}
+      </nav>
+      {% endif %}
+      {% for label, value in notes.items() %}
+        {% if loop.first and toc_items %}<div class="notes-rule"></div>{% endif %}
+        <div class="notes-group">
+          <span class="notes-label">{{ label }}</span>
+          <span class="notes-value">{{ value }}</span>
+        </div>
+      {% endfor %}
+    </aside>
+    {% endif %}
+    <div class="prose">
+      {{ page.content }}
+    </div>
+  </div>
+
+  {% if author %}
+  <div class="author-card">
+    {{ m.avatar(author.name, 46) }}
+    <div class="author-body">
+      <span class="author-name">{{ author.name }}</span>
+      {% if author.bio %}<p class="author-bio">{{ author.bio }}</p>{% endif %}
+      <div class="author-actions">
+        <a class="btn btn-secondary" href="{{ nav.homepage.url | url if nav.homepage else base_url ~ '/' }}">All posts</a>
+        {% for s in config.extra.social %}<a class="btn btn-tertiary" href="{{ s.url }}">{{ s.label }}</a>{% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if (page.previous_page and not page.previous_page.is_homepage) or page.next_page %}
+  <nav class="article-pager" aria-label="Adjacent posts">
+    {% if page.previous_page and not page.previous_page.is_homepage %}
+    <a class="pager-prev" href="{{ page.previous_page.url | url }}"><span class="notes-label">Previous</span><span class="pager-title">{{ page.previous_page.title }}</span></a>
+    {% else %}<span></span>{% endif %}
+    {% if page.next_page %}
+    <a class="pager-next" href="{{ page.next_page.url | url }}"><span class="notes-label">Next</span><span class="pager-title">{{ page.next_page.title }}</span></a>
+    {% endif %}
+  </nav>
+  {% endif %}
+</article>

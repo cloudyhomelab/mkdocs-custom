@@ -1,0 +1,30 @@
+{% set home_url = nav.homepage.url | url if nav.homepage else base_url ~ '/' %}
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <span class="wordmark">{{ config.site_name }}</span>
+      {% if config.site_description %}<span class="footer-tagline">{{ config.site_description }}</span>{% endif %}
+    </div>
+    {% if config.extra.social %}
+    <div class="footer-col">
+      <span class="notes-label">Elsewhere</span>
+      {% for s in config.extra.social %}
+        <a href="{{ s.url }}">{{ s.label }}{% if s.handle %}<span class="muted"> {{ s.handle }}</span>{% endif %}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+    <div class="footer-col">
+      <span class="notes-label">This site</span>
+      <a href="{{ home_url }}">Posts</a>
+      {% for item in nav if item.is_section %}
+        {% set first = item.children | selectattr('is_page') | first %}
+        {% if first %}<a href="{{ first.url | url }}">{{ item.title }}</a>{% endif %}
+      {% endfor %}
+      <a href="{{ 'search.html' | url }}">Search</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>{% if config.copyright %}{{ config.copyright }}{% else %}© {{ build_date_utc.year }} {{ config.extra.author.name if config.extra.author else config.site_name }}{% endif %}</span>
+    <a href="https://www.mkdocs.org">Built with MkDocs</a>
+  </div>
+</footer>

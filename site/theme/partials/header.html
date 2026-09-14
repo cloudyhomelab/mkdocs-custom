@@ -1,0 +1,29 @@
+{% set home_url = nav.homepage.url | url if nav.homepage else base_url ~ '/' %}
+{% set post_count = nav.pages | rejectattr('is_homepage') | list | length %}
+<header class="site-header">
+  <div class="brand-nav">
+    <a class="wordmark" href="{{ home_url }}">{{ config.site_name }}</a>
+    <nav class="site-nav" aria-label="Sections">
+      <a href="{{ home_url }}"{% if page and page.is_homepage %} class="is-active"{% endif %}>Posts</a>
+      {% for item in nav %}
+        {% if item.is_section %}
+          {% set first = item.children | selectattr('is_page') | first %}
+          {% if first %}<a href="{{ first.url | url }}"{% if item.active %} class="is-active"{% endif %}>{{ item.title }}</a>{% endif %}
+        {% endif %}
+      {% endfor %}
+      {% for link in config.extra.links or [] %}
+        <a href="{{ link.url }}">{{ link.label }}</a>
+      {% endfor %}
+    </nav>
+  </div>
+  <div class="header-tools">
+    <div class="mode-toggle" role="group" aria-label="Colour mode">
+      <button type="button" data-mode="light">Light</button>
+      <button type="button" data-mode="dark">Dark</button>
+    </div>
+    <form class="search-box" action="{{ 'search.html' | url }}" method="get" role="search">
+      <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="M12.5 12.5 17 17"/></svg>
+      <input type="search" name="q" placeholder="Search {{ post_count }} post{{ 's' if post_count != 1 }}" aria-label="Search">
+    </form>
+  </div>
+</header>
