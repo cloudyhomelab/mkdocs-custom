@@ -8,6 +8,8 @@ on:
     # Only inputs of the image; content and workflow-only commits must not republish it.
     paths:
       - Dockerfile
+      - Caddyfile
+      - docker-entrypoint.sh
       - docker-bake.hcl
       - .dockerignore
       - pyproject.toml
