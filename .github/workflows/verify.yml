@@ -77,16 +77,39 @@ jobs:
           docker run --rm --entrypoint python "$image" -c \
             'from importlib.metadata import entry_points; assert "devblog" in entry_points(group="mkdocs.themes").names'
 
-          # a strict build with only docs/ and mkdocs.yml mounted, as in production
+          # a strict build with only docs/ and mkdocs.yml mounted
           out=$(mktemp -d)
           docker run --rm --user "$(id -u):$(id -g)" \
             -v "${PWD}/sample/docs:/blog/docs:ro" \
             -v "${PWD}/sample/mkdocs.yml:/blog/mkdocs.yml:ro" \
             -v "${out}:/blog/site" \
-            "$image" build --strict
+            "$image" mkdocs build --strict
           for page in index.html browse.html search.html search/search_index.json; do
             [ -f "${out}/${page}" ] || { echo "missing ${page}"; exit 1; }
           done
+
+          # the default command: build, then serve with caddy, as in production
+          cid=$(docker run --detach --rm \
+            -v "${PWD}/sample/docs:/blog/docs:ro" \
+            -v "${PWD}/sample/mkdocs.yml:/blog/mkdocs.yml:ro" \
+            -p 8000:8000 \
+            "$image")
+          trap 'docker logs "$cid"; docker stop "$cid" >/dev/null' EXIT
+          for _ in $(seq 30); do
+            [ "$(docker inspect --format '{{.State.Health.Status}}' "$cid")" = healthy ] && break
+            sleep 2
+          done
+          [ "$(docker inspect --format '{{.State.Health.Status}}' "$cid")" = healthy ] || { echo "container never became healthy"; exit 1; }
+
+          expect() { # path expected-status
+            status=$(curl --silent --output /dev/null --write-out '%{http_code}' "http://127.0.0.1:8000$1")
+            [ "$status" = "$2" ] || { echo "$1: expected $2, got $status"; exit 1; }
+          }
+          expect / 200
+          expect /search/search_index.json 200
+          expect /css/theme.css 200
+          expect /no-such-page 404
+          curl --silent http://127.0.0.1:8000/no-such-page | grep -q '<title>Not found' || { echo "404 page not served"; exit 1; }
 
   # the single required status check for branch protection
   verified:

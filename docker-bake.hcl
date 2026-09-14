@@ -17,7 +17,7 @@ target "image" {
 
   labels = {
     "org.opencontainers.image.title"       = "mkdocs-dev-blog"
-    "org.opencontainers.image.description" = "MkDocs with the devblog theme installed; mount mkdocs.yml and docs/ at /blog (see sample/)"
+    "org.opencontainers.image.description" = "MkDocs with the devblog theme, built at start and served by Caddy; mount the directory holding mkdocs.yml and docs/ at /blog (see sample/)"
     "org.opencontainers.image.source"      = "https://github.com/cloudyhomelab/mkdocs-dev-blog"
     "org.opencontainers.image.revision"    = "${GIT_SHA}"
   }

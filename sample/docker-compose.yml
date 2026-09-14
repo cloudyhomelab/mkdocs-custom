@@ -7,4 +7,5 @@ services:
       - ./mkdocs.yml:/blog/mkdocs.yml:ro
     ports:
       - "8000:8000"
+    # the site is built at start; restart the container to publish new posts
     restart: unless-stopped
