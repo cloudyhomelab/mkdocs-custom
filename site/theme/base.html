@@ -1,0 +1,51 @@
+{% import "partials/macros.html" as m with context %}
+{% set all_posts = nav.pages | rejectattr('is_homepage') | list %}
+{% set posts = (all_posts | selectattr('meta.date') | sort(attribute='meta.date', reverse=true) | list) + (all_posts | rejectattr('meta.date') | list) %}
+{% set types = posts | map(attribute='meta.type') | map('default', 'Post') | unique | list %}
+{% if config.extra.type_order %}{% set types = (config.extra.type_order | select('in', types) | list) + (types | reject('in', config.extra.type_order) | list) %}{% endif %}
+{% set groups = {} %}
+{% for t in types %}{% set _ = groups.update({t: []}) %}{% endfor %}
+{% for p in posts %}{% set _ = groups[p.meta.type | default('Post')].append(p) %}{% endfor %}
+<!DOCTYPE html>
+<html lang="{{ config.theme.locale | default('en') }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% set desc = page.meta.description if page and page.meta.description else config.site_description %}
+  {% if desc %}<meta name="description" content="{{ desc }}">{% endif %}
+  {% if config.site_author %}<meta name="author" content="{{ config.site_author }}">{% endif %}
+  <title>{% block title %}{% if page and page.title and not page.is_homepage %}{{ page.title }} · {% endif %}{{ config.site_name }}{% endblock %}</title>
+  {% if page and page.canonical_url %}<link rel="canonical" href="{{ page.canonical_url }}">{% endif %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ 'css/theme.css' | url }}">
+  {% for path in config.extra_css %}<link rel="stylesheet" href="{{ path | url }}">{% endfor %}
+  <script>
+    (function () {
+      var mode;
+      try { mode = localStorage.getItem('theme'); } catch (e) {}
+      if (mode !== 'light' && mode !== 'dark') {
+        mode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      document.documentElement.dataset.theme = mode;
+    })();
+  </script>
+  {% block extrahead %}{% endblock %}
+</head>
+<body>
+  {% include "partials/header.html" %}
+  <main class="site-main">
+    {% block content %}{% endblock %}
+  </main>
+  {% include "partials/footer.html" %}
+  <script>var base_url = {{ base_url | tojson }};</script>
+  <script src="{{ 'js/theme.js' | url }}"></script>
+  {% block scripts %}
+  {% for script in config.extra_javascript %}
+    {% set path = script.path if script.path is defined else script %}
+    {% if path != 'search/main.js' %}{{ script | script_tag }}{% endif %}
+  {% endfor %}
+  {% endblock %}
+</body>
+</html>

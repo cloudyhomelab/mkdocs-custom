@@ -1,0 +1,46 @@
+{% macro fmt_date(d) -%}
+  {%- if d.strftime is defined %}{{ d.day }} {{ d.strftime('%b %Y') }}{% else %}{{ d }}{% endif -%}
+{%- endmacro %}
+
+{% macro read_time(p) -%}
+  {{ [((p.content | striptags | wordcount) / 220) | round(0, 'ceil') | int, 1] | max }} min
+{%- endmacro %}
+
+{% macro initials(name) -%}
+  {{ name.split() | map('first') | join('') | upper | truncate(2, true, '') }}
+{%- endmacro %}
+
+{% macro avatar(name, size) -%}
+  <span class="avatar" style="--size:{{ size }}px" aria-hidden="true">{{ initials(name) }}</span>
+{%- endmacro %}
+
+{% macro post_row(p, num) %}
+  <a class="post-row" href="{{ p.url | url }}">
+    <span class="post-num">{{ '%02d' % num }}</span>
+    <span class="post-body">
+      <span class="post-title">{{ p.title }}</span>
+      {% if p.meta.description %}<span class="post-deck">{{ p.meta.description }}</span>{% endif %}
+      <span class="post-meta">
+        {% if p.meta.date %}<span>{{ fmt_date(p.meta.date) }}</span><span>·</span>{% endif %}
+        <span>{{ read_time(p) }}</span>
+        {% if p.meta.tags %}<span>·</span><span class="post-tag">{{ p.meta.tags | first }}</span>{% endif %}
+      </span>
+    </span>
+  </a>
+{% endmacro %}
+
+{% macro log_row(p) %}
+  <a class="log-row" href="{{ p.url | url }}">
+    {% if p.meta.date %}<span class="log-date">{{ fmt_date(p.meta.date) }}</span>{% endif %}
+    <span class="log-title">{{ p.title }}</span>
+    {% if p.meta.description %}<span class="log-deck">{{ p.meta.description }}</span>{% endif %}
+  </a>
+{% endmacro %}
+
+{% macro type_label(t) -%}
+  {{- (config.extra.type_labels or {}).get(t, t ~ 's') -}}
+{%- endmacro %}
+
+{% macro browse_url(t) -%}
+  {{- 'browse.html' | url }}?type={{ t | urlencode -}}
+{%- endmacro %}

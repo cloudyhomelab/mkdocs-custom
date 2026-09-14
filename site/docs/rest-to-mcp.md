@@ -1,4 +1,10 @@
-# Turning a REST API into an MCP server
+---
+title: Turning a REST API into an MCP server
+description: Wrapping an existing REST API in an MCP server, using an exchange-rate service as the example.
+date: 2026-09-14
+type: Guide
+tags: [MCP, Java]
+---
 
 This post describes how to wrap an existing REST API in an MCP server, using an exchange-rate service as the example. [Frankfurter](https://frankfurter.dev) publishes daily reference rates from about a hundred central banks, needs no API key, and has a small, well-documented v2 API.
 

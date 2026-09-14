@@ -1,1 +1,32 @@
 site_name: Dev Blog
+site_author: Sujoy Das
+
+theme:
+  name: null
+  custom_dir: theme
+  include_search_page: true
+  static_templates:
+    - 404.html
+    - browse.html
+
+extra:
+  type_labels:
+    Hardware: Hardware
+  author:
+    name: Sujoy Das
+  social:
+    - label: GitHub
+      handle: cloudyhomelab
+      url: https://github.com/cloudyhomelab
+
+markdown_extensions:
+  - toc:
+      toc_depth: 3
+  - tables
+  - fenced_code
+  - codehilite:
+      css_class: highlight
+      guess_lang: false
+  - admonition
+  - attr_list
+  - footnotes

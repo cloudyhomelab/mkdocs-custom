@@ -1,0 +1,48 @@
+{% import "partials/macros.html" as m with context %}
+{% set author = config.extra.author %}
+{% set featured = (posts | selectattr('meta.featured') | list + posts) | first %}
+{% set limit = config.extra.home_limit | default(6) %}
+
+{% if featured %}
+<section class="hero">
+  <div class="hero-grid{% if featured.meta.image %} has-image{% endif %}">
+    <div class="hero-text">
+      <div class="kicker">
+        <span class="kicker-type">{{ featured.meta.type | default('Post') }}</span>
+        <span class="kicker-rule"></span>
+        <span class="kicker-meta">{% if featured.meta.tags %}{{ featured.meta.tags | first }} · {% endif %}{{ m.read_time(featured) }}</span>
+      </div>
+      <a class="hero-title" href="{{ featured.url | url }}"><h1>{{ featured.title }}</h1></a>
+      {% if featured.meta.description %}<p class="hero-deck">{{ featured.meta.description }}</p>{% endif %}
+      <div class="byline">
+        {% if author %}{{ m.avatar(author.name, 28) }}{% endif %}
+        <span>{% if author %}{{ author.name }}{% endif %}{% if author and featured.meta.date %} · {% endif %}{% if featured.meta.date %}{{ m.fmt_date(featured.meta.date) }}{% endif %}</span>
+      </div>
+    </div>
+    {% if featured.meta.image %}
+    <a class="hero-image" href="{{ featured.url | url }}"><img src="{{ featured.meta.image | url }}" alt=""></a>
+    {% endif %}
+  </div>
+</section>
+{% endif %}
+
+<section class="home-groups{% if types | length == 1 %} single{% endif %}">
+  {% for t in types %}
+  {% set group = groups[t] %}
+  <div class="group{% if t == 'Log' %} group-compact{% endif %}">
+    <div class="col-head">
+      <h2>{{ m.type_label(t) }}</h2>
+      <a class="col-more" href="{{ m.browse_url(t) }}">All {{ m.type_label(t) | lower }} <span aria-hidden="true">→</span></a>
+    </div>
+    {% if loop.first %}<div class="col-deck">{{ page.content }}</div>{% endif %}
+    <div class="{{ 'log-list' if t == 'Log' else 'post-list' }}">
+      {% for p in group[:limit] %}
+        {% if t == 'Log' %}{{ m.log_row(p) }}{% else %}{{ m.post_row(p, loop.index) }}{% endif %}
+      {% endfor %}
+    </div>
+    {% if group | length > limit %}
+    <a class="col-rest" href="{{ m.browse_url(t) }}">{{ group | length - limit }} more</a>
+    {% endif %}
+  </div>
+  {% endfor %}
+</section>

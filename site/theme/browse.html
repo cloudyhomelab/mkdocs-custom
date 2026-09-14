@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Browse · {{ config.site_name }}{% endblock %}
+
+{% block content %}
+{% set tags = posts | map(attribute='meta.tags') | select | sum(start=[]) | unique | list %}
+<div class="browse" data-browse>
+  <div class="browse-head">
+    <div>
+      <span class="kicker-plain">Browse</span>
+      <h1 data-browse-title>All posts</h1>
+    </div>
+    <span class="browse-count" data-browse-count>{{ posts | length }} posts</span>
+  </div>
+
+  <nav class="browse-tabs" aria-label="Post types">
+    <a href="{{ 'browse.html' | url }}" data-type="">All<span class="muted"> {{ posts | length }}</span></a>
+    {% for t in types %}
+    <a href="{{ m.browse_url(t) }}" data-type="{{ t }}" data-label="{{ m.type_label(t) }}">{{ m.type_label(t) }}<span class="muted"> {{ groups[t] | length }}</span></a>
+    {% endfor %}
+  </nav>
+
+  {% if tags %}
+  <div class="browse-tags" role="group" aria-label="Filter by tag">
+    {% for tag in tags %}<button type="button" data-tag="{{ tag }}">{{ tag }}</button>{% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="browse-rows">
+    {% for p in posts %}
+    <a class="browse-row" href="{{ p.url | url }}" data-type="{{ p.meta.type | default('Post') }}" data-tags="{{ (p.meta.tags or []) | join('|') }}">
+      <span class="browse-date">{% if p.meta.date %}{{ m.fmt_date(p.meta.date) }}{% endif %}</span>
+      <span class="browse-body">
+        <span class="browse-title">{{ p.title }}</span>
+        {% if p.meta.description %}<span class="browse-deck">{{ p.meta.description }}</span>{% endif %}
+      </span>
+      <span class="browse-type">{{ p.meta.type | default('Post') }}</span>
+      <span class="browse-read">{{ m.read_time(p) }}</span>
+    </a>
+    {% endfor %}
+  </div>
+  <p class="browse-empty" hidden>No posts match this filter.</p>
+</div>
+{% endblock %}
