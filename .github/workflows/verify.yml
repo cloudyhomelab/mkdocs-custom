@@ -90,8 +90,7 @@ jobs:
 
           # the default command: build, then serve with caddy, as in production
           cid=$(docker run --detach --rm \
-            -v "${PWD}/sample/docs:/blog/docs:ro" \
-            -v "${PWD}/sample/mkdocs.yml:/blog/mkdocs.yml:ro" \
+            -v "${PWD}/sample:/blog:ro" \
             -p 8000:8000 \
             "$image")
           trap 'docker logs "$cid"; docker stop "$cid" >/dev/null' EXIT
