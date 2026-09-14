@@ -1,7 +1,9 @@
 # Theme
 
-Standalone MkDocs theme (no parent theme). Wire it up in `mkdocs.yml` with
-`theme: {name: null, custom_dir: theme, include_search_page: true}`.
+Standalone MkDocs theme (no parent theme), packaged as the `devblog` theme by the
+repo-root `pyproject.toml`. Install it with `pip install .` and select it in
+`mkdocs.yml` with `theme: {name: devblog}`. Static pages and search settings
+live in `mkdocs_theme.yml`.
 
 ## Layout
 

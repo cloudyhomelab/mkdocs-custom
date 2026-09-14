@@ -1,0 +1,10 @@
+services:
+  mkdocs:
+    image: docker.io/binarycodes/mkdocs-dev-blog:latest
+    container_name: mkdocs
+    volumes:
+      - ./docs:/blog/docs:ro
+      - ./mkdocs.yml:/blog/mkdocs.yml:ro
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
