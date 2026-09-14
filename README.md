@@ -1,14 +1,12 @@
 # mkdocs-dev-blog
 
 A Docker image for a Markdown dev blog: MkDocs with the [devblog theme](theme/README.md),
-built at container start and served by Caddy. Content is not baked in; mount your
-`mkdocs.yml` and `docs/` at `/blog`, as in [`sample/`](sample/).
+built at container start and served by Caddy. Content is not baked in; mount the
+directory holding `mkdocs.yml` and `docs/` at `/blog`, as in [`sample/`](sample/).
+The site is built to `/srv/site`, so the mount can be read-only.
 
 ```sh
-docker run --rm -p 8000:8000 \
-  -v "$PWD/docs:/blog/docs:ro" \
-  -v "$PWD/mkdocs.yml:/blog/mkdocs.yml:ro" \
-  docker.io/binarycodes/mkdocs-dev-blog:latest
+docker run --rm -p 8000:8000 -v "$PWD:/blog:ro" docker.io/binarycodes/mkdocs-dev-blog:latest
 ```
 
 The build is strict, so a broken post stops the container instead of serving a broken
@@ -20,14 +18,12 @@ plain HTTP; terminate TLS in front of it.
 Override the command to run the MkDocs dev server with live reload:
 
 ```sh
-docker run --rm -p 8000:8000 \
-  -v "$PWD/docs:/blog/docs" \
-  -v "$PWD/mkdocs.yml:/blog/mkdocs.yml:ro" \
+docker run --rm -p 8000:8000 -v "$PWD:/blog:ro" \
   docker.io/binarycodes/mkdocs-dev-blog:latest mkdocs serve --dev-addr=0.0.0.0:8000
 ```
 
-`mkdocs build --strict` works the same way; mount a directory at `/blog/site` to
-collect the output.
+`mkdocs build --strict` works the same way; mount a writable directory at `/blog/site`
+to collect the output.
 
 ## Image
 
