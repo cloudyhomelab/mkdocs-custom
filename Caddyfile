@@ -1,5 +1,10 @@
 {
 	admin off
+
+	# TLS terminates at the edge, so log the client behind it
+	servers {
+		trusted_proxies static private_ranges
+	}
 }
 
 :8000 {
