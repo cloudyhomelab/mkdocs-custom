@@ -5,9 +5,10 @@
 {% set notes = page.meta.notes or {} %}
 {% set has_notes = toc_items or notes %}
 
+{% set ptype = page.meta.type | default('Post') %}
 <div class="article-back">
-  <a href="{{ nav.homepage.url | url if nav.homepage else base_url ~ '/' }}">
-    <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12.5 4 6.5 10l6 6"/></svg>Back to posts
+  <a href="{{ m.browse_url(ptype) }}">
+    <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12.5 4 6.5 10l6 6"/></svg>Back to {{ m.type_label(ptype) }}
   </a>
 </div>
 

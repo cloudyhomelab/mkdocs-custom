@@ -36,3 +36,11 @@
     {% if p.meta.description %}<span class="log-deck">{{ p.meta.description }}</span>{% endif %}
   </a>
 {% endmacro %}
+
+{% macro type_label(t) -%}
+  {{- (config.extra.type_labels or {}).get(t, t ~ 's') -}}
+{%- endmacro %}
+
+{% macro browse_url(t) -%}
+  {{- 'browse.html' | url }}?type={{ t | urlencode -}}
+{%- endmacro %}

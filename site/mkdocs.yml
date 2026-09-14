@@ -7,8 +7,11 @@ theme:
   include_search_page: true
   static_templates:
     - 404.html
+    - browse.html
 
 extra:
+  type_labels:
+    Hardware: Hardware
   author:
     name: Sujoy Das
   social:

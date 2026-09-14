@@ -1,11 +1,7 @@
 {% import "partials/macros.html" as m with context %}
 {% set author = config.extra.author %}
-{% set all_posts = nav.pages | rejectattr('is_homepage') | list %}
-{% set dated = all_posts | selectattr('meta.date') | sort(attribute='meta.date', reverse=true) | list %}
-{% set posts = dated + (all_posts | rejectattr('meta.date') | list) %}
 {% set featured = (posts | selectattr('meta.featured') | list + posts) | first %}
-{% set logs = posts | selectattr('meta.type', 'equalto', 'Log') | list %}
-{% set main_posts = posts | rejectattr('meta.type', 'equalto', 'Log') | list %}
+{% set limit = config.extra.home_limit | default(6) %}
 
 {% if featured %}
 <section class="hero">
@@ -30,41 +26,23 @@
 </section>
 {% endif %}
 
-<section class="home-columns{% if not logs and not author %} single{% endif %}">
-  <div class="col-main">
+<section class="home-groups{% if types | length == 1 %} single{% endif %}">
+  {% for t in types %}
+  {% set group = groups[t] %}
+  <div class="group{% if t == 'Log' %} group-compact{% endif %}">
     <div class="col-head">
-      <h2>Posts</h2>
-      <span class="col-count">{{ posts | length }} post{{ 's' if posts | length != 1 }}</span>
+      <h2>{{ m.type_label(t) }}</h2>
+      <a class="col-more" href="{{ m.browse_url(t) }}">All {{ m.type_label(t) | lower }} <span aria-hidden="true">→</span></a>
     </div>
-    <div class="col-deck">{{ page.content }}</div>
-    <div class="post-list">
-      {% for p in main_posts %}{{ m.post_row(p, loop.index) }}{% endfor %}
+    {% if loop.first %}<div class="col-deck">{{ page.content }}</div>{% endif %}
+    <div class="{{ 'log-list' if t == 'Log' else 'post-list' }}">
+      {% for p in group[:limit] %}
+        {% if t == 'Log' %}{{ m.log_row(p) }}{% else %}{{ m.post_row(p, loop.index) }}{% endif %}
+      {% endfor %}
     </div>
-  </div>
-
-  {% if logs or author %}
-  <div class="col-rule"></div>
-  <aside class="col-side">
-    {% if logs %}
-      <div class="col-head"><h2>Logs</h2></div>
-      <div class="log-list">
-        {% for p in logs %}{{ m.log_row(p) }}{% endfor %}
-      </div>
-    {% else %}
-      <div class="col-head"><h2>About</h2></div>
-      <div class="about-card">
-        {{ m.avatar(author.name, 46) }}
-        <div class="about-body">
-          <span class="about-name">{{ author.name }}</span>
-          {% if author.bio %}<p class="about-bio">{{ author.bio }}</p>{% endif %}
-          {% if config.extra.social %}
-          <div class="about-links">
-            {% for s in config.extra.social %}<a href="{{ s.url }}">{{ s.label }}</a>{% endfor %}
-          </div>
-          {% endif %}
-        </div>
-      </div>
+    {% if group | length > limit %}
+    <a class="col-rest" href="{{ m.browse_url(t) }}">{{ group | length - limit }} more</a>
     {% endif %}
-  </aside>
-  {% endif %}
+  </div>
+  {% endfor %}
 </section>

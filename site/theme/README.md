@@ -8,7 +8,7 @@ Standalone MkDocs theme (no parent theme). Wire it up in `mkdocs.yml` with
 - `base.html` — document shell, header, footer, colour-mode bootstrap.
 - `main.html` — renders `partials/home.html` for the homepage and
   `partials/article.html` for everything else.
-- `search.html`, `404.html` — static pages.
+- `browse.html`, `search.html`, `404.html` — static pages.
 - `css/theme.css` — all styling; palettes are the custom properties at the top.
 - `js/theme.js` — light/dark toggle and contents highlighting.
 
@@ -31,9 +31,14 @@ notes:                       # optional key/value list under Contents
 
 ```yaml
 extra:
-  author: {name: ..., bio: ...}          # byline, About column, author card
+  author: {name: ..., bio: ...}          # byline and author card
   social: [{label: GitHub, handle: ..., url: ...}]
   links: [{label: About, url: about/}]   # extra header links
+  type_labels: {Hardware: Hardware}      # plural label per type; default adds "s"
+  type_order: [Guide, Log]               # otherwise ordered by newest post
+  home_limit: 6                          # rows per type on the homepage
 ```
 
-Header navigation shows "Posts" plus any top-level `nav` sections.
+Posts are grouped by `type` (untyped posts are "Post"). Each type gets a header link,
+a homepage section, and a filter on `browse.html`, which also filters by tag.
+Header navigation also shows any top-level `nav` sections.

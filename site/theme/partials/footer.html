@@ -1,3 +1,4 @@
+{% import "partials/macros.html" as m with context %}
 {% set home_url = nav.homepage.url | url if nav.homepage else base_url ~ '/' %}
 <footer class="site-footer">
   <div class="footer-grid">
@@ -15,7 +16,7 @@
     {% endif %}
     <div class="footer-col">
       <span class="notes-label">This site</span>
-      <a href="{{ home_url }}">Posts</a>
+      {% for t in types %}<a href="{{ m.browse_url(t) }}">{{ m.type_label(t) }}</a>{% endfor %}
       {% for item in nav if item.is_section %}
         {% set first = item.children | selectattr('is_page') | first %}
         {% if first %}<a href="{{ first.url | url }}">{{ item.title }}</a>{% endif %}

@@ -1,4 +1,11 @@
 {% import "partials/macros.html" as m with context %}
+{% set all_posts = nav.pages | rejectattr('is_homepage') | list %}
+{% set posts = (all_posts | selectattr('meta.date') | sort(attribute='meta.date', reverse=true) | list) + (all_posts | rejectattr('meta.date') | list) %}
+{% set types = posts | map(attribute='meta.type') | map('default', 'Post') | unique | list %}
+{% if config.extra.type_order %}{% set types = (config.extra.type_order | select('in', types) | list) + (types | reject('in', config.extra.type_order) | list) %}{% endif %}
+{% set groups = {} %}
+{% for t in types %}{% set _ = groups.update({t: []}) %}{% endfor %}
+{% for p in posts %}{% set _ = groups[p.meta.type | default('Post')].append(p) %}{% endfor %}
 <!DOCTYPE html>
 <html lang="{{ config.theme.locale | default('en') }}">
 <head>
