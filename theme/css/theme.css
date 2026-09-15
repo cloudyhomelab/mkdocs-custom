@@ -580,18 +580,6 @@ html[data-theme="dark"] .highlight .s, html[data-theme="dark"] .highlight .s1, h
 .footer-col { display: flex; flex-direction: column; gap: 9px; min-width: 150px; }
 .footer-col a { font-size: 13px; color: var(--pk3); }
 .footer-col a:hover { color: var(--pk); text-decoration: none; }
-.footer-bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-  flex-wrap: wrap;
-  padding-top: 16px;
-  border-top: 1px solid var(--pr);
-  font-size: 12px;
-  color: var(--pk4);
-}
-.footer-bottom a { color: var(--pk3); }
 
 /* Responsive */
 @media (max-width: 1024px) {
