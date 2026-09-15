@@ -1,6 +1,6 @@
 services:
   mkdocs:
-    image: docker.io/binarycodes/mkdocs-dev-blog:latest
+    image: docker.io/binarycodes/mkdocs:latest
     container_name: mkdocs
     volumes:
       - .:/blog:ro
