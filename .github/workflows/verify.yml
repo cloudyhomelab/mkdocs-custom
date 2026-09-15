@@ -66,12 +66,12 @@ jobs:
           push: false
           set: |
             *.platform=linux/amd64
-            *.tags=mkdocs-dev-blog:verify
+            *.tags=mkdocs:verify
 
       - name: smoke-test the image
         run: |
           set -euo pipefail
-          image=mkdocs-dev-blog:verify
+          image=mkdocs:verify
 
           # the installed theme must be what mkdocs.yml selects
           docker run --rm --entrypoint python "$image" -c \
